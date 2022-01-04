@@ -1,0 +1,8 @@
+extends base
+block content
+  form(action="/edit" method="post")
+    input(type="text" name="title" value=title pattern="[\\w ]+")
+    textarea(name="content")=content
+    button(type="submit") Save Page
+  include easymde
+  a(href="delete") Delete Page

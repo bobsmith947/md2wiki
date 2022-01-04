@@ -1,0 +1,13 @@
+link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
+script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
+script.
+  var easyMDE = new EasyMDE({
+    promptURLs: true,
+    previewImagesInEditor: true,
+    uploadImage: true,
+    imageUploadEndpoint: `/edit/upload${window.location.search}`,
+    showIcons: ["upload-image"],
+    insertTexts: {
+      "upload-image": ["", ""]
+    }
+  });
