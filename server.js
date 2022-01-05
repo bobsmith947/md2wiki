@@ -62,6 +62,22 @@ app.get("/image/:file", (req, res) => {
 	}).catch(_ => res.sendStatus(404));
 });
 
+app.get("/search", (req, res) => {
+	if (req.xhr) {
+		getPages(req.query.page).then(pages => res.json(pages));
+	} else {
+		bucket.file(`pages/${req.query.page}.md`).exists()
+		.then(data => {
+			if (data[0]) { // file exists
+				res.redirect("/" + req.query.page.replaceAll(" ", "_"));
+			} else {
+				// TODO show search results
+				res.sendStatus(404);
+			}
+		});
+	}
+});
+
 app.get("/:page(\\w+)", (req, res) => {
 	bucket.file(`pages/${req.page}.md`).download()
 	.then(data => res.locals.content = md.render(data[0].toString()).body)
@@ -81,9 +97,11 @@ app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}...`);
 });
 
-async function getPages() {
+async function getPages(name = "") {
 	try {
-		const [files] = await bucket.getFiles({prefix:"pages/"});
+		const [files] = await bucket.getFiles({
+			prefix: "pages/" + name.charAt(0).toUpperCase() + name.substring(1)
+		});
 		return files.slice(1).map(file => file.name.slice(6, -3));
 	} catch {
 		return [];

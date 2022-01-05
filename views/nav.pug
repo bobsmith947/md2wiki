@@ -1,7 +1,28 @@
-nav.navbar.navbar-expand.navbar-dark.bg-primary.fixed-top.py-0.px-1
+nav.navbar.navbar-expand.navbar-dark.bg-primary.px-2
   a.navbar-brand(href="/") md2wiki
   button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent")
     span.navbar-toggler-icon
   #navbarContent.collapse.navbar-collapse
-    ul.navbar-nav
-      //-TODO make search bar
+    form.d-flex(action="/search")
+      input#search.form-control.me-2(type="search" name="page" placeholder="Search" list="pages")
+      datalist#pages
+      button.btn.btn-secondary(type="submit") Search
+script.
+  document.getElementById("search").addEventListener("input", ev => {
+    var search = ev.data || "";
+    if (search.endsWith(" ")) {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          var pages = JSON.parse(xhr.responseText), options = "";
+          for (var p of pages) options += `<option value="${p}">`;
+          document.getElementById("pages").innerHTML = options;
+        }
+      };
+      var params = new URLSearchParams(window.location.search);
+      params.append("page", ev.target.value);
+      xhr.open("GET", "/search?" + params.toString());
+      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+      xhr.send();
+    }
+  });
