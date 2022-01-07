@@ -6,8 +6,19 @@ script.
     previewImagesInEditor: true,
     uploadImage: true,
     imageUploadEndpoint: `/edit/upload${window.location.search}`,
-    showIcons: ["upload-image", "heading-2", "heading-3"],
-    hideIcons: ["heading"],
+    toolbar: ["bold", "italic", "strikethrough", "heading-2", "heading-3", "|",
+      "quote", "unordered-list", "ordered-list", "table", "horizontal-rule", "|",
+      "link", "image", "upload-image", {
+        name: "footnote",
+        className: "fa fa-caret-up",
+        title: "Add footnote reference",
+        action: ed => ed.codemirror.replaceSelection("^[]")
+      }, {
+        name: "page",
+        className: "fa fa-at",
+        title: "Add page reference",
+        action: ed => ed.codemirror.replaceSelection("@[]")
+      }, "|", "preview", "guide"],
     insertTexts: {
       "upload-image": ["", ""]
     }

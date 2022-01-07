@@ -80,8 +80,11 @@ app.get("/search", (req, res) => {
 
 app.get("/:page(\\w+)", (req, res) => {
 	bucket.file(`pages/${req.page}.md`).download()
-	.then(data => res.locals.content = md.render(data[0].toString()).body)
-	.catch(_ => res.status(404))
+	.then(data => {
+		res.locals.content = md.render(data[0].toString(), {
+			plugins: [require("./markdown-it-footnote")]
+		}).body;
+	}).catch(_ => res.status(404))
 	.finally(() => res.render("base"));
 });
 

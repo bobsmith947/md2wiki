@@ -1,0 +1,3 @@
+[submodule "markdown-it-footnote"]
+	path = markdown-it-footnote
+	url = https://github.com/bobsmith947/markdown-it-footnote
