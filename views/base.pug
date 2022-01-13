@@ -12,6 +12,7 @@ html(lang="en")
     .m-2.mx-sm-5
       block content
         a(href=`/edit/${title.replaceAll(" ", "_")}/`) Edit Page
+        a.ps-3(href=`/history/${title.replaceAll(" ", "_")}/`) View History
         if content
           h1=title
           #toc.m-0

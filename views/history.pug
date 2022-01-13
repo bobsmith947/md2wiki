@@ -1,0 +1,13 @@
+extends base
+block content
+  table.table.caption-top
+    caption Page History for #{title}
+    thead
+      tr
+        th Revision
+        th Timestamp
+    tbody
+      each edit in history
+        tr
+          td: a(href=edit.generation)=edit.generation
+          td=new Date(edit.metadata.timeCreated).toISOString()

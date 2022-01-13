@@ -78,6 +78,21 @@ app.get("/search", (req, res) => {
 	}
 });
 
+app.get("/history/:page(\\w+)", (req, res) => {
+	getHistory(req.page).then(h => res.render("history", {history:h}));
+});
+
+app.get("/history/:page(\\w+)/:id(\\d+)", (req, res) => {
+	bucket.file(`pages/${req.page}.md`, {
+		generation: req.params.id
+	}).download().then(data => {
+		res.locals.content = md.render(data[0].toString(), {
+			plugins: [require("./markdown-it-footnote")]
+		}).body;
+	}).catch(_ => res.status(404))
+	.finally(() => res.render("base"));
+});
+
 app.get("/:page(\\w+)", (req, res) => {
 	bucket.file(`pages/${req.page}.md`).download()
 	.then(data => {
@@ -105,7 +120,20 @@ async function getPages(name = "") {
 		const [files] = await bucket.getFiles({
 			prefix: "pages/" + name.charAt(0).toUpperCase() + name.substring(1)
 		});
-		return files.slice(1).map(file => file.name.slice(6, -3));
+		files.splice(0, files[0].name === "pages/" ? 1 : 0);
+		return files.map(file => file.name.slice(6, -3));
+	} catch {
+		return [];
+	}
+}
+
+async function getHistory(name = "") {
+	try {
+		const [files] = await bucket.getFiles({
+			prefix: "pages/" + name,
+			versions: edits
+		});
+		return files;
 	} catch {
 		return [];
 	}
